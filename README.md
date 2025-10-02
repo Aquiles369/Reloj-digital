@@ -33,7 +33,7 @@ Pequeña app web para medir tu tiempo de práctica/juego. Permite iniciar/parar 
 
 • Formato: interfaz web local (HTML/JS), toda la data se guarda en localStorage por defecto (offline, en tu máquina).<br><br>
 
-• Pasos a seguir:<br><br> 
+• Pasos a seguir:<br>
 
 1. Descarga el repositorio.<br>
 
