@@ -35,8 +35,9 @@ Pequeña app web para medir tu tiempo de práctica/juego. Permite iniciar/parar 
 
 • Pasos a seguir:<br><br> 
 
-1- Descarga el repositorio.<br>
-2- Abra el archivo contador.html en con su navegador preferido.<br>
+• Descarga el repositorio.<br>
+
+• Abra el archivo contador.html en con su navegador preferido.<br>
 
 <br>
 
