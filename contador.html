@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Reloj de Maestría — 10 niveles</title>
+<meta name="theme-color" content="#0b0e1e"/>
+<link rel="icon" href="fav_Aquiles.png" type="image/x-icon">
+<style>
+  :root{
+    --bg:#0b0e1e; --ink:#e7e9ff; --muted:#a8b0ff; --card:#131633; --card2:#0f122b;
+    --accent:#15c46b; --danger:#e34d4d; --warning:#ffb703; --ok:#1dd1a1; --shadow:rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; color:var(--ink); font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;
+    background:
+      radial-gradient(900px 600px at 80% -10%, #1a1e45 0%, transparent 60%),
+      radial-gradient(1000px 700px at -10% 110%, #0e1231 0%, transparent 60%),
+      var(--bg);
+    display:grid; place-items:center; padding:22px;
+  }
+  .app{width:min(1200px,100%); display:grid; grid-template-columns:260px 1fr 280px; gap:18px}
+  @media (max-width:980px){.app{grid-template-columns:1fr}.right{order:3}.left{order:2}.center{order:1}}
+
+  .card{background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+        border:1px solid rgba(255,255,255,.08); border-radius:18px; box-shadow:0 10px 30px var(--shadow)}
+  .left{padding:16px}
+  .center{padding:24px; display:grid; place-items:center; text-align:center}
+  .right{padding:16px}
+
+  .totals{display:flex; flex-direction:column; gap:12px}
+  .pill{
+    display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:14px;
+    background:rgba(7,255,124,.06); border:1px solid rgba(7,255,124,.18)
+  }
+  .pill .icon{width:28px; height:28px; display:grid; place-items:center; border-radius:50%; background:rgba(7,255,124,.12); border:1px solid rgba(7,255,124,.24)}
+  .pill .big{font-size:26px; font-weight:800}
+  .small{font-size:12px; color:var(--muted)}
+  .actions{display:flex; flex-wrap:wrap; gap:10px}
+  button{appearance:none; border:none; border-radius:12px; padding:12px 16px; font-weight:800; letter-spacing:.3px; cursor:pointer}
+  .start{background:linear-gradient(90deg, #16db65, #0dbf56); color:#072013; box-shadow:0 6px 20px rgba(22,219,101,.35)}
+  .stop{background:linear-gradient(90deg, #ff595e, #e34d4d); color:#2a0b0b; box-shadow:0 6px 20px rgba(255,89,94,.35)}
+  .ghost{background:transparent; color:var(--ink); border:1px solid rgba(255,255,255,.18)}
+
+  .display{
+    font-variant-numeric: tabular-nums; font-weight:900; letter-spacing:.06em; user-select:none;
+    font-size:min(13vw, 120px); text-shadow:0 10px 40px rgba(0,0,0,.5);
+  }
+  .flor{font-size:min(8vw,48px); opacity:.9; margin:0 16px}
+
+  .levels{display:flex; flex-direction:column; gap:10px}
+  .level{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:10px 12px; border-radius:12px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08)
+  }
+  .level.locked{background:rgba(227,77,77,.08); border-color:rgba(227,77,77,.25)}
+  .level.unlocked{background:rgba(22,219,101,.08); border-color:rgba(22,219,101,.25)}
+  .level .name{display:flex; flex-direction:column;}
+  .level .name b{font-size:13px; letter-spacing:.2px}
+  .level .name span{font-size:12px; color:var(--muted)}
+  .tag{min-width:24px; min-height:24px; border-radius:999px; display:grid; place-items:center; padding:2px 8px; font-size:12px; font-weight:800}
+  .tag.lock{background:#3b0f13; color:#ffb4b4; border:1px solid #7a1b24}
+  .tag.ok{background:#0f2e25; color:#7cffa8; border:1px solid #1e6a4f}
+
+  .modal{position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.55); backdrop-filter:blur(3px)}
+  .modal.open{display:grid}
+  .box{background:var(--card2); border:1px solid rgba(255,255,255,.12); border-radius:18px; padding:22px; width:min(560px,100%)}
+  .box h2{margin:0 0 6px}
+  .box p{margin:0; color:var(--muted)}
+
+  .hint{margin-top:10px; color:var(--muted); font-size:12px}
+</style>
+</head>
+<body>
+  <main class="app">
+    <!-- IZQUIERDA -->
+    <section class="card left">
+      <div class="totals">
+        <div class="pill" title="Total acumulado">
+          <div class="icon">⏱️</div>
+          <div>
+            <div class="small">TOTAL DE HORAS JUGADAS</div>
+            <div class="big" id="totalHours">0 horas</div>
+          </div>
+        </div>
+        <div class="pill" style="background:rgba(255,183,3,.06); border-color:rgba(255,183,3,.18)" title="Tiempo de la sesión activa">
+          <div class="icon">🔥</div>
+          <div>
+            <div class="small">SESIÓN ACTUAL</div>
+            <div class="big" id="sessionTime">00:00:00</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button id="start" class="start">🟢 Iniciar</button>
+          <button id="stop" class="stop">🔴 Parar</button>
+          <button id="reset" class="ghost" title="Borrar todo el progreso (confirmación)">Reiniciar progreso</button>
+        </div>
+        <div class="hint">Atajos: <b>S</b> iniciar / <b>P</b> parar • Persiste en <code>localStorage</code>.</div>
+      </div>
+    </section>
+
+    <!-- CENTRO -->
+    <section class="card center">
+      <div style="display:flex; align-items:center;">
+        <span class="flor">⚜️</span>
+        <div id="display" class="display">00:00:00</div>
+        <span class="flor">⚜️</span>
+      </div>
+    </section>
+
+    <!-- DERECHA: NIVELES -->
+    <aside class="card right">
+      <h3 style="margin:6px 0 10px; color:var(--muted)">Niveles de Maestría</h3>
+      <div id="levels" class="levels"></div>
+    </aside>
+  </main>
+
+  <!-- MODAL -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true">
+    <div class="box">
+      <h2 id="mTitle">🎉 ¡Nivel alcanzado!</h2>
+      <p id="mMsg">Seguí sumando horas, sensei.</p>
+      <div class="actions" style="margin-top:14px; justify-content:center">
+        <button id="closeModal" class="ghost">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  // ======= CONFIG =======
+  const LKEY = {
+    total: 'aquiles_clock_totalSeconds',
+    running: 'aquiles_clock_isRunning',
+    startTs: 'aquiles_clock_lastStart',
+    unlocked: 'aquiles_clock_levelsUnlocked'
+  };
+  // thresholds en horas (ascendente) y textos
+  const LEVELS = [
+    { h:10,   name:'TIEMPO DE JUEGO NIVEL 1',  emoji:'🥉', quote:'El hábito nace. 10 horas de temple.' },
+    { h:50,   name:'TIEMPO DE JUEGO NIVEL 2',  emoji:'🥈', quote:'Constancia visible. 50 horas en la mochila.' },
+    { h:100,  name:'TIEMPO DE JUEGO NIVEL 3',  emoji:'🥇', quote:'Triple dígito. Tu aim mental se estabiliza.' },
+    { h:300,  name:'TIEMPO DE JUEGO NIVEL 4',  emoji:'🛡️', quote:'Resistencia real. 300 horas sin flaquear.' },
+    { h:500,  name:'TIEMPO DE JUEGO NIVEL 5',  emoji:'⚔️', quote:'Medio millar: el acero se templa.' },
+    { h:1000, name:'TIEMPO DE JUEGO NIVEL 6',  emoji:'🐉', quote:'Mil horas: aparece el dragón de la paciencia.' },
+    { h:2000, name:'TIEMPO DE JUEGO NIVEL 7',  emoji:'🧠', quote:'Doble mil: la intuición se vuelve radar.' },
+    { h:5000, name:'TIEMPO DE JUEGO NIVEL 8',  emoji:'🌋', quote:'Cinco mil: forja volcánica, maestro en progreso.' },
+    { h:7000, name:'TIEMPO DE JUEGO NIVEL 9',  emoji:'🚀', quote:'Siete mil: la nave entra en hiperespacio.' },
+    { h:10000,name:'TIEMPO DE JUEGO NIVEL ∞', emoji:'✨', quote:'Diez mil: leyenda. El juego ahora juega para vos.' }
+  ];
+
+  // ======= STATE =======
+  let totalSeconds = Number(localStorage.getItem(LKEY.total) || 0);
+  let isRunning = localStorage.getItem(LKEY.running) === '1';
+  let lastStart = Number(localStorage.getItem(LKEY.startTs) || 0);
+  let unlocked = [];
+  try{ unlocked = JSON.parse(localStorage.getItem(LKEY.unlocked)||'[]')||[] }catch{ unlocked = [] }
+
+  const $display = document.getElementById('display');
+  const $totalHours = document.getElementById('totalHours');
+  const $sessionTime = document.getElementById('sessionTime');
+  const $start = document.getElementById('start');
+  const $stop = document.getElementById('stop');
+  const $reset = document.getElementById('reset');
+  const $levels = document.getElementById('levels');
+  const $modal = document.getElementById('modal');
+  const $mTitle = document.getElementById('mTitle');
+  const $mMsg = document.getElementById('mMsg');
+  const $closeModal = document.getElementById('closeModal');
+
+  // build levels UI
+  const rows = [];
+  LEVELS.forEach((L, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'level locked';
+    div.dataset.h = L.h;
+    div.innerHTML = `
+      <div class="name">
+        <b>${L.emoji} ${L.name}</b>
+        <span>${L.h.toLocaleString('es-AR')} horas</span>
+      </div>
+      <div class="tag lock">✖</div>`;
+    rows.push(div); $levels.appendChild(div);
+  });
+
+  function fmtHMS(sec){
+    sec = Math.max(0, Math.floor(sec));
+    const h = Math.floor(sec/3600).toString().padStart(2,'0');
+    const m = Math.floor((sec%3600)/60).toString().padStart(2,'0');
+    const s = (sec%60).toString().padStart(2,'0');
+    return `${h}:${m}:${s}`;
+  }
+  function render(){
+    // total (incluye sesión si está corriendo)
+    const now = Date.now();
+    const runningDelta = isRunning ? Math.floor((now - lastStart)/1000) : 0;
+    const totalWithDelta = totalSeconds + runningDelta;
+    $display.textContent = fmtHMS(totalWithDelta);
+    $sessionTime.textContent = fmtHMS(runningDelta);
+    const hours = totalWithDelta/3600;
+    $totalHours.textContent = `${Math.floor(hours).toLocaleString('es-AR')} horas`;
+
+    // levels
+    LEVELS.forEach((L, i)=>{
+      const reached = hours >= L.h;
+      const row = rows[i];
+      row.classList.toggle('unlocked', reached);
+      row.classList.toggle('locked', !reached);
+      const tag = row.querySelector('.tag');
+      if(reached){ tag.textContent = '✔'; tag.className='tag ok'; }
+      else { tag.textContent='✖'; tag.className='tag lock'; }
+    });
+  }
+
+  function save(){
+    localStorage.setItem(LKEY.total, String(totalSeconds));
+    localStorage.setItem(LKEY.running, isRunning ? '1':'0');
+    localStorage.setItem(LKEY.startTs, String(lastStart||0));
+    localStorage.setItem(LKEY.unlocked, JSON.stringify(unlocked));
+  }
+
+  function openModal(title,msg){
+    $mTitle.textContent = title; $mMsg.textContent = msg; $modal.classList.add('open');
+  }
+  function close(){ $modal.classList.remove('open'); }
+  $closeModal.onclick = close; $modal.addEventListener('click',e=>{if(e.target=== $modal) close();});
+
+  function checkLevelUps(){
+    const hours = (totalSeconds + (isRunning?Math.floor((Date.now()-lastStart)/1000):0))/3600;
+    LEVELS.forEach((L, idx)=>{
+      if(hours >= L.h && unlocked.indexOf(L.h) === -1){
+        unlocked.push(L.h); save();
+        openModal(`🏆 Nivel desbloqueado: ${L.name}` , `${L.emoji} ${L.quote}`);
+      }
+    });
+  }
+
+  let tickId = null;
+  function start(){
+    if(isRunning) return; isRunning = true; lastStart = Date.now(); save();
+    tickId = setInterval(()=>{ render(); checkLevelUps(); }, 1000);
+    render();
+  }
+  function stop(){
+    if(!isRunning) return; const now = Date.now();
+    const delta = Math.floor((now - lastStart)/1000); totalSeconds += Math.max(0, delta);
+    isRunning = false; lastStart = 0; save(); render(); checkLevelUps();
+    if(tickId){ clearInterval(tickId); tickId=null; }
+  }
+  function hardReset(){
+    if(!confirm('¿Borrar todo el progreso? Esto no se puede deshacer.')) return;
+    totalSeconds = 0; isRunning = false; lastStart = 0; unlocked = []; save(); render();
+  }
+
+  $start.onclick = start; $stop.onclick = stop; $reset.onclick = hardReset;
+  window.addEventListener('keydown', (e)=>{
+    if(e.isComposing) return; const k = e.key.toLowerCase();
+    if(k==='s'){ start(); } else if(k==='p'){ stop(); }
+  });
+
+  // reanudar si estaba corriendo
+  if(isRunning){ tickId = setInterval(()=>{ render(); checkLevelUps(); }, 1000); }
+  render();
+})();
+</script>
+</body>
+</html>
