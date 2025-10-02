@@ -31,13 +31,13 @@
 
 Pequeña app web para medir tu tiempo de práctica/juego. Permite iniciar/parar sesiones, muestra el total de horas acumuladas y la sesión actual en un reloj digital grande y claro. Todo persiste en localStorage. Incluye reinicio de progreso y 10 niveles de maestría: al alcanzar cada umbral de horas, se desbloquea con una animación.
 
-• Formato: interfaz web local (HTML/JS), toda la data se guarda en localStorage por defecto (offline, en tu máquina).<br>
+• Formato: interfaz web local (HTML/JS), toda la data se guarda en localStorage por defecto (offline, en tu máquina).<br><br>
 
-1. Pasos a seguir:<br><br> 
+• Pasos a seguir:<br><br> 
 
-2. Descarga el repositorio.<br>
+1. Descarga el repositorio.<br>
 
-3. Abra el archivo contador.html en con su navegador preferido.<br>
+2. Abra el archivo contador.html en con su navegador preferido.<br>
 
 <br>
 
