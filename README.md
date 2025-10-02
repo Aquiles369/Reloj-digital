@@ -11,7 +11,9 @@
 <picture> <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">  </picture>
 
  ### <picture> <img src = "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXBzcWFzcXZsdGNhN29rNjF5Z2JkbWdnNW40NXU1NHR0Z3lxNXN0cCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/kFBpX9YNpVg7X7jSVx/giphy.gif" width = 75px>  </picture> Reloj Digital
-<br>
+
+ **Pequeña app web para medir tu tiempo de práctica/juego. Permite iniciar/parar sesiones, muestra el total de horas acumuladas y la sesión actual en un reloj digital grande y claro. Todo persiste en localStorage. Incluye reinicio de progreso y 10 niveles de maestría: al alcanzar cada umbral de horas, se desbloquea con una animación  <a href="https://youtu.be/EzWE7fqrCVo" target="_blank" rel="noopener">Youtube</a>.** 
+ 
 
 <p align="center">
  <img  height="420rem" alt="GIF" src="https://github.com/Aquiles369/iconos/blob/main/2025-10-01-20-09-06.gif"/>
@@ -67,7 +69,7 @@ Pequeña app web para medir tu tiempo de práctica/juego. Permite iniciar/parar 
 <br>
 
 ### <picture> <img src = "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExZjE1cm1nZTczYzBlZHVtcjFmdDc3c2k1ZzlvbGZsaTBod2hrbngyZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/J5jIarVcz2ovuI7kYb/giphy.gif" width = 80px>  </picture> Perfecto para trackear práctica, estudio o grind diario. Minimalista, adictivo y sin excusas.
-<br><br>
+<br>
 
 
 <picture> <img src="https://user-images.githubusercontent.com/74038190/212284115-f47cd8ff-2ffb-4b04-b5bf-4d1c14c0247f.gif" width ="1050" > </picture>
