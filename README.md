@@ -18,7 +18,7 @@
 <br><br> 
 
 <p align="center">
- <img  height="420rem" alt="GIF" src="https://github.com/Aquiles369/iconos/blob/main/2025-10-01-20-09-06.gif"/>
+ <img  height="420rem" alt="GIF" src="https://github.com/Aquiles369/iconos/blob/main/demo_reloj.gif"/>
 </p>
 
 <br>
